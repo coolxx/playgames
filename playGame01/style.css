@@ -1,0 +1,293 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+html,body{
+	max-width:750px;
+	font-size: 20px;
+	margin: 0 auto;
+}
+.warning{
+	font-size: 0.2rem;
+	line-height: 0.4rem;
+	color: #999;
+	padding: 0.2rem
+}
+#app{
+	width: 7.5rem;
+	margin: 0 auto;
+	overflow: hidden;
+}
+.diceBox{
+	width: 1rem;
+	height: 1rem;
+	margin: 1rem auto;
+	transform:perspective(8rem) rotateY(20deg) rotateX(30deg); 
+	position:relative;
+	transform-style:preserve-3d; 
+}
+.diceBox00{
+	transform:perspective(8rem) rotateY(20deg) rotateX(30deg); 
+	transition:0s;
+}
+.diceBox01{
+	transform:perspective(8rem) rotateY(0deg) rotateX(0deg); 
+	transition:0.1s;
+}
+.diceBox02{
+	transform:perspective(8rem) rotateY(180deg) rotateX(0deg); 
+	transition:0.1s;
+}
+.diceBox03{
+	transform:perspective(8rem) rotateY(-90deg) rotateX(0deg); 
+	transition:0.1s;
+}
+.diceBox04{
+	transform:perspective(8rem) rotateY(90deg) rotateX(0deg); 
+	transition:0.1s;
+}
+.diceBox05{
+	transform:perspective(8rem) rotateY(180deg) rotateX(90deg); 
+	transition:0.1s;
+}
+.diceBox06{
+	transform:perspective(8rem) rotateY(0deg) rotateX(90deg); 
+	transition:0.1s;
+}
+.diceBox img{ 
+	width:100%; 
+	height:100%; 
+	position:absolute; 
+}
+.front{ 
+	background:#f90;
+	transform:translateZ(0.5rem);
+}
+.back{
+	transform:translateZ(-0.5rem); 
+	background:#9F0;
+}
+.left{
+	background:green; 
+	transform:rotateY(90deg) translateZ(0.5rem);
+}
+.right{ 
+	background:pink; 
+	transform:rotateY(90deg) translateZ(-0.5rem);
+}
+.top{ 
+	background:purple; 
+	transform:rotateX(90deg) translateZ(0.5rem);
+}
+.bottom{ 
+	background:aqua; 
+	transform:rotateX(90deg) translateZ(-0.5rem);
+}
+.ope{
+	overflow: hidden;
+}
+.money{
+	float: left;
+}
+.money p,.bet p{
+	font-size: 0.3rem;
+	line-height: 0.4rem;
+	margin-top: 0.2rem;
+	margin-left: 1rem;
+	color: #333
+}
+.money p span,.bet p span{
+	font-weight: bold;
+}
+.money p i,.bet p i{
+	color: #ff7200;
+	font-style: normal;
+}
+.bet{
+	float: right;
+	margin-right: 1rem;
+}
+.bet p{
+	margin-left: 0
+}
+.bet button{
+	display: block;
+	margin: 0.2rem auto 0;
+	font-size: 0.2rem;
+	padding: 0.05rem 0.2rem;
+	border: none;
+	border-radius: 0.1rem;
+	background: #ff7200;
+	color: #fff;
+	outline: none;
+}
+.btn{
+	margin-left: 0.6rem;
+	margin-top: 0.1rem;
+}
+.btn button{
+	display: block;
+	margin: 0.2rem auto 0;
+	font-size: 0.3rem;
+	padding: 0.1rem 0.2rem;
+	border: none;
+	border-radius: 0.1rem;
+	background: #ff7200;
+	color: #fff;
+	outline: none;
+}
+.result{
+	margin: 0.2rem auto 0;
+	padding-top: 0.2rem;
+	border-top: 1px solid #e5e5e5;
+	width: 7rem;
+}
+.resuTit{
+	overflow: hidden;
+	text-align: center;
+}
+.sysName,.userName{
+	float: left;
+	width: 2rem;
+	font-size: 0.3rem;
+	color: #ff7200;
+	font-weight: bold;
+}
+.userName{
+	float: right;
+}
+.resuTit b{
+	float: left;
+	width: 3rem;
+	font-size: 0.5rem;
+	line-height: 0.5rem;
+	color: red;
+	font-style: italic;
+}
+.numBox{
+	margin-top: 0.2rem;
+	overflow: hidden;
+	height: 1rem
+}
+.numBox span{
+	width: 1.8rem;
+	float: left;
+	font-size: 0
+}
+.numBox span i{
+	display: inline-block;
+	margin: 0 0.05rem;
+	width: 0.5rem;
+	font-size: 0.3rem;
+	font-weight: bold;
+	font-style: normal;
+	text-align: center;
+	line-height: 0.5rem;
+	border-bottom: 1px solid #d5d5d5;
+}
+.numBox b{
+	float: left;
+	width: 3.4rem;
+	font-size: 0.5rem;
+	color: red;
+	text-align: center; 
+}
+.numBox b i{
+	font-style: normal;
+}
+.historicalRecords{
+	width: 7rem;
+	margin: 0.5rem auto;
+}
+.historicalRecords p{
+	overflow: hidden;
+}
+.historicalRecords p b{
+	float: left;
+	width: 20%;
+	font-size: 0.3rem;
+	line-height: 0.6rem;
+	background: #e5e5e5;
+	color: #ff7200;
+	text-align: center;
+}
+.historicalRecords p .last{
+	width: 40%
+}
+.historicalRecords ul{
+	overflow-y: scroll;
+	height: 3rem;
+}
+.historicalRecords ul li{
+	border-bottom: 1px solid #e5e5e5;
+	font-size: 0
+}
+.historicalRecords ul li span{
+	display: inline-block;
+	width: 20%;
+	font-size: 0.3rem;
+	line-height: 2;
+	text-align: center;
+}
+::-webkit-scrollbar
+{
+    width: 3px;
+    height: 3px;
+    background-color: #e5e5e5;
+}
+::-webkit-scrollbar-thumb
+{
+    border-radius: 3px;
+    background-color: #ff7200;
+}
+.historicalRecords ul li .time{
+	width: 40%;
+	font-size: 0.2rem;
+	color: #999
+}
+.masking{
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.3);
+}
+.editBet{
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -3rem;
+	margin-top: -1.3rem;
+	width: 6rem;
+	height: 2.5rem;
+	background: #fff;
+	border-radius: 0.1rem;
+}
+.editBet b{
+	display: block;
+	font-size: 0.3rem;
+	text-align: center;
+	color: #ff7200;
+	line-height: 0.6rem
+}
+.editBet input{
+	display: block;
+	margin: 0.2rem auto;
+	width: 4rem;
+	height: 0.5rem;
+	border: 1px solid #ddd;
+	font-size: 0.24rem;
+	text-indent: 1em
+}
+.editBet button{
+	display: block;
+	margin: 0.5rem auto 0;
+	font-size: 0.2rem;
+	padding: 0.1rem 0.2rem;
+	border: none;
+	border-radius: 0.1rem;
+	background: #ff7200;
+	color: #fff;
+	outline: none;
+}

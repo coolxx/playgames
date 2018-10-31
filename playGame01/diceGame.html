@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<link rel="stylesheet" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script>
+        function pgScale(){
+            var deviceWidth = document.documentElement.clientWidth;
+            if(deviceWidth > 750) deviceWidth = 750;
+            document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';
+        }
+        pgScale();
+        window.onresize=pgScale;
+    </script>
+</head>
+<body>
+	<p class="warning">规则很简单：比大小，相同系统赢，豹子翻倍</p>
+	<div id="app">
+		<div class="diceBox" :class="[diceBoxAct01]">
+			<img class="front" src="images/1.png" alt="">
+			<img class="back" src="images/2.png" alt="">
+			<img class="left" src="images/3.png" alt="">
+			<img class="right" src="images/4.png" alt="">
+			<img class="top" src="images/5.png" alt="">
+			<img class="bottom" src="images/6.png" alt="">
+		</div>
+		<div class="diceBox" :class="[diceBoxAct02]">
+			<img class="front" src="images/1.png" alt="">
+			<img class="back" src="images/2.png" alt="">
+			<img class="left" src="images/3.png" alt="">
+			<img class="right" src="images/4.png" alt="">
+			<img class="top" src="images/5.png" alt="">
+			<img class="bottom" src="images/6.png" alt="">
+		</div>
+		<div class="diceBox" :class="[diceBoxAct03]">
+			<img class="front" src="images/1.png" alt="">
+			<img class="back" src="images/2.png" alt="">
+			<img class="left" src="images/3.png" alt="">
+			<img class="right" src="images/4.png" alt="">
+			<img class="top" src="images/5.png" alt="">
+			<img class="bottom" src="images/6.png" alt="">
+		</div>
+		<div class="ope">
+			<div class="money">
+				<p><span>系统资金：</span><i>{{sysMoney}}</i>金</p>
+				<p><span>用户资金：</span><i>{{userMoney}}</i>金</p>
+				
+			</div>
+			<div class="bet">
+				<p><span>一局<i>{{betNum}}</i>金</span></p>
+				<button @click='openBet()'>修改赌注</button>
+			</div>		
+		</div>
+		<p class="btn" v-if='ifAct'><button @click='throwDice()'>掷筛子</button></p>
+			<p class="btn" v-else><button style="background: #999">投掷中...</button></p>
+		<div class="result">
+			<p class="resuTit">
+				<span class="sysName">系统</span>
+				<b>VS</b>
+				<span class="userName">用户</span>
+			</p>
+			<p class="numBox">
+				<span>
+					<i>{{sysNumArr[0]}}</i>
+					<i>{{sysNumArr[1]}}</i>
+					<i>{{sysNumArr[2]}}</i>
+				</span>
+				<b v-show='ifStart'>
+					<i v-if='ifWin'>赢</i>
+					<i v-else style="color: #999">输</i>
+				</b>
+				<span style="float: right">
+					<i>{{userNumArr[0]}}</i>
+					<i>{{userNumArr[1]}}</i>
+					<i>{{userNumArr[2]}}</i>
+				</span>
+			</p>
+		</div>
+		<div class="historicalRecords">
+			<p>
+				<b>系统</b>
+				<b>用户</b>
+				<b>结果</b>
+				<b class="last">时间</b>
+			</p>
+			<ul v-if='historyList.length > 0'>
+				<li v-for='item in historyList'>
+					<span>{{item.sysNum}}</span>
+					<span>{{item.userNum}}</span>
+					<span v-if='item.ifWin02' style="color: red;font-weight: bold">赢</span>
+					<span v-else style="color: #666">输</span>
+					<span class="time">{{item.time}}</span>
+				</li>
+			</ul>
+			<ul v-else>
+				<li style="font-size: 0.4rem;text-align: center;line-height: 3rem">暂无数据</li>
+			</ul>
+		</div>
+		<p class="masking" @click='closeBet()' v-show='ifOpenBet'></p>
+		<div class="editBet" v-show='ifOpenBet'>
+			<b>请输入赌注</b>
+			<input type="number" placeholder="请输入0~3000以内的数字" v-model='betVal'>
+			<button @click='deitBetBtn()'>投注完成</button>
+		</div>
+	</div>
+	
+	<script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				sysMoney:100000,
+				sysNumArr:[0,0,0],
+				userMoney:100000,
+				userNumArr:[0,0,0],
+				betNum:100,
+				ifWin:true,
+				ifStart:false,
+				diceBoxAct01:'',
+				diceBoxAct02:'',
+				diceBoxAct03:'',
+				ifAct:true,
+				historyList:[],
+				ifOpenBet:false,
+				betVal:''
+			},
+			methods:{
+				throwDice:function () {
+					if(this.sysMoney <= 0){
+						alert('系统输的裤衩都没了，没得玩了');
+						return false
+					}
+					if(this.userMoney <= 0){
+						alert('裤衩都输完了，还玩？！！！剁手吧');
+						return false
+					}
+					this.ifStart = false;
+					this.ifAct = false;
+					this.sysNumArr = [0,0,0];
+					this.userNumArr = [0,0,0];
+					this.diceBoxAct01 = 'diceBoxAct00';
+					this.diceBoxAct02 = 'diceBoxAct00';
+					this.diceBoxAct03 = 'diceBoxAct00';
+					var that = this;
+					var n1 = 0;
+					var timer01=setInterval(function (argument) {
+						n1++;
+						if(n1 == 20){
+							n1 = 0;
+							clearInterval(timer01)
+						}
+						Vue.set(that.sysNumArr,0,that.getMathRandom());
+						Vue.set(that.sysNumArr,1,that.getMathRandom());
+						Vue.set(that.sysNumArr,2,that.getMathRandom());
+					},100);
+					
+					setTimeout(function () {
+						var timer02=setInterval(function (argument) {
+							n1++;
+							if(n1 == 20){
+								n1 = 0;
+								clearInterval(timer02)
+							}
+							Vue.set(that.userNumArr,0,that.getMathRandom());
+							Vue.set(that.userNumArr,1,that.getMathRandom());
+							Vue.set(that.userNumArr,2,that.getMathRandom());
+							
+							that.diceBoxAct01 = 'diceBox0'+that.userNumArr[0];
+							that.diceBoxAct02 = 'diceBox0'+that.userNumArr[1];
+							that.diceBoxAct03 = 'diceBox0'+that.userNumArr[2];
+						},100);
+					},2000);
+					setTimeout(function(){
+						if(that.ifLeopard(that.sysNumArr)){
+							if(that.ifLeopard(that.userNumArr)){
+								if(that.sysNumArr[0] >= that.userNumArr[0]){
+									that.ifWin = false;
+									that.sysMoney = parseInt(that.sysMoney) + parseInt(that.betNum)*2;
+									that.userMoney = that.userMoney - that.betNum*2
+								}else{
+									that.ifWin = true;
+									that.sysMoney = that.sysMoney - that.betNum*2;
+									that.userMoney = parseInt(that.userMoney) + parseInt(that.betNum)*2
+								}
+							}else{
+								that.ifWin = false;
+								that.sysMoney = parseInt(that.sysMoney) + parseInt(that.betNum)*2;
+								that.userMoney = that.userMoney - that.betNum*2
+							}
+						}else{
+							if(that.ifLeopard(that.userNumArr)){
+								that.ifWin = true;
+								that.sysMoney = that.sysMoney - that.betNum*2;
+								that.userMoney = parseInt(that.userMoney) + parseInt(that.betNum)*2
+							}else{
+								var sysSum = 0;
+								var userSum = 0;
+								for(var i=0;i<that.userNumArr.length ;i++){
+									sysSum = sysSum + that.sysNumArr[i];
+									userSum = userSum + that.userNumArr[i];
+								}
+								if(sysSum >= userSum){
+									that.ifWin = false;
+									that.sysMoney = parseInt(that.sysMoney) + parseInt(that.betNum);
+									that.userMoney = that.userMoney - that.betNum
+								}else{
+									that.ifWin = true;
+									that.sysMoney = that.sysMoney - that.betNum;
+									that.userMoney = parseInt(that.userMoney) + parseInt(that.betNum)
+								}
+							}
+						}
+						that.ifAct = true;
+						that.ifStart = true;
+						that.historyList.unshift({
+							'sysNum':that.sysNumArr.join(','),
+							'userNum':that.userNumArr.join(','),
+							'ifWin02':that.ifWin,
+							'time':new Date().toLocaleString()
+						});
+
+					},4500)
+				},
+				getMathRandom:function () {
+					return 1+Math.floor(Math.random()*6);
+				},
+				ifLeopard:function(arr){
+					for(var i=0; i<arr.length-1; i++){
+						if(arr[i] != arr[i+1]){
+							return false
+						}
+					}
+					return true;
+				},
+				openBet:function(){
+					this.ifOpenBet = true;
+				},
+				deitBetBtn:function(){
+					if(this.betVal > 3000){
+						alert('败家玩意儿，压那么多，输了喝西北风啊，改！！！');
+						return false
+					}
+					if(this.betVal == ''){
+						alert('不能为空的！！！');
+						return false
+					}
+					this.betNum = this.betVal;
+					this.ifOpenBet = false
+				},
+				closeBet:function(){
+					this.ifOpenBet = false
+				}
+			}
+		})
+	</script>
+</body>
+</html>

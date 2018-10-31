@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<link rel="stylesheet" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script>
+        function pgScale(){
+            var deviceWidth = document.documentElement.clientWidth;
+            if(deviceWidth > 750) deviceWidth = 750;
+            document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';
+        }
+        pgScale();
+        window.onresize=pgScale;
+    </script>
+</head>
+<body>
+	<p class="warning">规则很简单：点击图片调换位置，与原图一直即可完成游戏(<span style="color: red">为了游戏体验，请尽量选择方形图片</span>)</p>
+	<div id="app">
+		<div class="getImg" v-if='ifSHowInput'>
+			<b>点击选择图片开始游戏</b>
+			<input id="inputImg" type="file" value="选择图片" accept="image/*" @change='getImgUrl()'>
+		</div>
+		<div class="mainWrap" v-else>
+			<b>参照图</b>
+			<p id="imgShowBox" class="imgShowBox"><img :src="imgUrl" alt=""></p>
+			<b style="margin-top: 0.4rem">点击开始拼图</b>
+			<div id="ptBox" :style="{height:faHeight+'rem'}">
+                <span @click="moveImg(index)" :class="item.checked?'act':''" v-for="(item,index) in aSpanList" :style="{width:item.width,height:item.height,left:item.left,top:item.top,background:item.background,backgroundSize:item.backgroundSize}"></span>
+            </div>
+            <p class="chooseGrade" @click="chooseGrade()">选择难度</p>
+            <p class="masking" v-show="ifChooseGrade" @click="closeGrade()"></p>
+            <div v-show="ifChooseGrade" class="chooseGradeBox">
+                <b>请选择难度</b>
+                <input type="radio" id="one" value="3" v-model="grade" @change="showJig">
+                <label for="one">简单</label>
+                <br>
+                <input type="radio" id="two" value="4" v-model="grade" @change="showJig">
+                <label for="two">一般</label>
+                <br>
+                <input type="radio" id="three" value="5" v-model="grade" @change="showJig">
+                <label for="three">困难</label>
+            </div>
+		</div>
+	</div>
+
+	<script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				ifSHowInput:true,
+				imgUrl:'',
+                ptHeight:'',
+                faHeight:'',
+				grade:3,
+				clickNum:0,
+                aSpanList:[],
+                arr01:[],
+                ifChooseGrade:false
+			},
+			methods: {
+                getImgUrl: function () {
+                    var that = this;
+                    var file = document.getElementById('inputImg').files[0];
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function (e) {
+                        that.imgUrl = e.target.result;
+                        if (that.imgUrl) {
+                            that.ifSHowInput = false;
+                            setTimeout(function () {
+                                that.ptHeight = document.getElementById('imgShowBox').offsetHeight;
+                                var ptWidth = document.getElementById('imgShowBox').offsetWidth;
+                                var trueHeight = 6 * that.ptHeight / ptWidth;
+                                that.faHeight = trueHeight;
+                                var aSpanArr = [];
+                                for (var i = 0; i < that.grade; i++) {
+                                    for (var j = 0; j < that.grade; j++) {
+                                        var oW = 6 / that.grade;
+                                        var oH = trueHeight / that.grade;
+                                        aSpanArr.push({
+                                            'width': oW + 'rem',
+                                            'height': oH + 'rem',
+                                            'left': oW * j + 'rem',
+                                            'top': oH * i + 'rem',
+                                            'background': 'url(' + that.imgUrl + ')' + -oW * j + 'rem ' + -oH * i + 'rem',
+                                            'backgroundSize': '6rem ' + trueHeight + 'rem',
+                                            'checked':false
+                                        })
+                                    }
+                                };
+                                var leftArr=[];
+                                var topArr =[];
+                                for (var i = 0; i < aSpanArr.length; i++) {
+                                    that.arr01.push(aSpanArr[i]);
+                                    leftArr.push(aSpanArr[i].left);
+                                    topArr.push(aSpanArr[i].top);
+                                }
+                                that.arr01.sort(function(){
+                                    return 0.5 - Math.random()
+                                });
+                                for(var i=0;i<that.arr01.length; i++){
+                                    that.arr01[i].left = leftArr[i];
+                                    that.arr01[i].top = topArr[i];
+                                }
+                                that.aSpanList = that.arr01;
+                            }, 100)
+                        }
+                    };
+                },
+                showJig:function(){
+                    var that = this;
+                    this.aSpanList.splice(0)
+                    setTimeout(function () {
+                        that.ptHeight = document.getElementById('imgShowBox').offsetHeight;
+                        var ptWidth = document.getElementById('imgShowBox').offsetWidth;
+                        var trueHeight = 6 * that.ptHeight / ptWidth;
+                        that.faHeight = trueHeight;
+                        var aSpanArr = [];
+                        for (var i = 0; i < that.grade; i++) {
+                            for (var j = 0; j < that.grade; j++) {
+                                var oW = 6 / that.grade;
+                                var oH = trueHeight / that.grade;
+                                aSpanArr.push({
+                                    'width': oW + 'rem',
+                                    'height': oH + 'rem',
+                                    'left': oW * j + 'rem',
+                                    'top': oH * i + 'rem',
+                                    'background': 'url(' + that.imgUrl + ')' + -oW * j + 'rem ' + -oH * i + 'rem',
+                                    'backgroundSize': '6rem ' + trueHeight + 'rem',
+                                    'checked':false
+                                })
+                            }
+                        };
+                        var leftArr=[];
+                        var topArr =[];
+                        for (var i = 0; i < aSpanArr.length; i++) {
+                            that.arr01.push(aSpanArr[i]);
+                            leftArr.push(aSpanArr[i].left);
+                            topArr.push(aSpanArr[i].top);
+                        }
+                        that.arr01.sort(function(){
+                            return 0.5 - Math.random()
+                        });
+                        for(var i=0;i<that.arr01.length; i++){
+                            that.arr01[i].left = leftArr[i];
+                            that.arr01[i].top = topArr[i];
+                        }
+                        that.aSpanList = that.arr01;
+                    },100)
+                },
+                getArrRandomly:function (arr) {
+                    var len = arr.length;
+                    for (var i = 0; i < len; i++) {
+                        var randomIndex = Math.floor(Math.random()*(len-i));//这里一定要注意，后面不管是（i+1）还是（len-i），它们是时变的。
+                        var itemAtIndex = arr[randomIndex];
+                        arr[randomIndex] = arr[i];
+                        arr[i] = itemAtIndex;
+                    }
+                    return arr;
+                },
+                moveImg:function (index) {
+                    this.clickNum = this.clickNum+1;
+                    if(this.clickNum == 1){
+                        this.aSpanList[index].checked = true;
+                        return false
+                    }
+                    if(this.clickNum == 2){
+                        var newLeft = this.arr01[index].left;
+                        var newTop = this.arr01[index].top;
+                        var newIndex = this.arr01[index].index;
+                        for(var i=0;i<this.aSpanList.length;i++){
+                            if (this.aSpanList[i].checked){
+                                this.aSpanList[i].checked = false;
+                                var oldLeft = this.arr01[i].left;
+                                var oldTop = this.arr01[i].top;
+                                var oldIndex = this.arr01[i].index;
+                                console.log(oldLeft,oldTop)
+                                this.aSpanList[i].left = newLeft;
+                                this.aSpanList[i].top = newTop;
+                                this.aSpanList[i].index = newIndex;
+                                this.aSpanList[index].left = oldLeft;
+                                this.aSpanList[index].top = oldTop;
+                                this.aSpanList[index].index = oldIndex;
+                                break;
+                            }
+                        }
+                        console.log(this.aSpanList)
+                        this.clickNum = 0
+                    }
+                },
+                chooseGrade:function () {
+                    this.ifChooseGrade = true
+                },
+                closeGrade:function () {
+                    this.ifChooseGrade = false
+                }
+            }
+		})
+	</script>
+</body>
+</html>
